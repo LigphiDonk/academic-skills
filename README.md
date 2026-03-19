@@ -1,69 +1,70 @@
-# Academic Skills
+# academic-skills
 
-**GitHub:** [LigphiDonk/academic-skills](https://github.com/LigphiDonk/academic-skills)
+A collection of Claude Code skills for academic research workflows.
 
-`academic-skills` 是一组面向 AI Agent 的本地技能仓库。每个 skill 都是一套可复用的任务流程，Agent 识别到对应场景后，可以直接按 `SKILL.md` 执行，减少重复提示和人工整理成本。
+## Skills
 
-## 仓库内容
+### `real-literature-trace` — Real Literature Trace
 
-目前仓库包含 1 个 skill：
+Turns a vague literature request into a traceable paper set. Instead of generating plausible-sounding but fabricated references, this skill searches for real papers, verifies their sources, and returns canonical links you can actually open.
 
-- `real-literature-trace/` - `Real Literature Trace`
+**Triggers automatically when you say things like:**
+- 帮我找真实文献 / 找可追溯的论文
+- 整理文献综述 / 核心文献表
+- 筛选近五年优秀论文
+- 找国外顶会顶刊论文
+- Find me papers on X with real DOI links
 
-这个 skill 适合做下面这些任务：
+**What it does:**
 
-- 搜索真实可追溯的学术文献
-- 整理文献综述和核心文献表
-- 核验 DOI、出版社页、CNKI 链接等来源
-- 筛选近五年的高质量论文
-- 组织中英文混合文献
+1. Narrows vague topics before searching — asks only the highest-value clarifying questions
+2. Builds a bilingual keyword plan across Chinese and English sources
+3. Searches with traceability in mind: CNKI for Chinese papers, DOI/publisher pages for international ones
+4. Screens candidates by relevance, venue quality, and verifiability
+5. Returns a structured table with title, authors, year, venue, selection rationale, quality grade (S/A/B/C), canonical link, CNKI link, and DOI
 
-## Skill 是什么
+**Output example:**
 
-你可以把 skill 理解成给 AI Agent 的“任务手册”。
+| 序号 | 文献题目 | 作者 | 年份 | 期刊/会议 | 质量等级 | 真实地址 | DOI |
+|------|----------|------|------|-----------|----------|----------|-----|
+| 1 | ... | ... | 2023 | IEEE TAC | S | publisher page | 10.xxxx |
 
-- 把一类重复任务封装成固定流程
-- 让 Agent 在特定任务上更稳定、更可控
-- 方便通过 GitHub 仓库安装、更新和分发
+**Quality guarantee:** Never fabricates titles, DOIs, or links. Marks unverified links as `待核验`. Prefers fewer real papers over many unverifiable ones.
 
-## 安装方式
-
-如果你的环境支持 `npx skills`，可以直接从这个仓库安装。
-
-安装整个仓库：
+## Install
 
 ```bash
+# Install the full collection
 npx skills add LigphiDonk/academic-skills
-```
 
-只安装这个 skill：
-
-```bash
-npx skills add LigphiDonk/academic-skills --skill "Real Literature Trace"
-```
-
-如果你的 `skills` 版本按技能 `id` 匹配，可以尝试：
-
-```bash
+# Install a single skill by id
 npx skills add LigphiDonk/academic-skills --skill real-literature-trace
 ```
 
-如果仍然提示找不到 skill，可以先不带 `--skill`，因为当前仓库只有 1 个 skill：
+Restart Claude Code after installing to activate the skill.
 
-```bash
-npx skills add LigphiDonk/academic-skills
+## Usage
+
+Once installed, the skill triggers automatically from natural language:
+
+```
+帮我找近五年关于"图神经网络"的核心文献，需要有 CNKI 地址
 ```
 
-## 使用示例
+```
+Find 10 papers on spacecraft pursuit-evasion games from top journals, with DOI links
+```
 
-安装后，可以直接让 Agent 按这个 skill 的方式工作，例如：
+```
+做一个关于 XXX 的文献综述，中英文混合，15 篇左右
+```
 
-- `帮我找近五年的真实文献`
-- `整理一个关于 XXX 的核心文献表`
-- `把这些论文按 CNKI / DOI / 期刊来源分类`
+## Repository layout
 
-## 说明
+```
+academic-skills/
+└── real-literature-trace/
+    └── SKILL.md       # trigger conditions, search workflow, output spec
+```
 
-- `SKILL.md` 里定义了这个 skill 的触发场景、工作流和输出要求
-- 安装完成后，重启 Codex 或重新加载 Agent 环境，让新 skill 生效
-- 如果你只是想本地查看内容，直接打开 [`real-literature-trace/SKILL.md`](./real-literature-trace/SKILL.md) 即可
+Each skill lives in its own directory. `SKILL.md` defines trigger conditions, the search workflow, screening rubric, and output format.
